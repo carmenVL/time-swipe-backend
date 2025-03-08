@@ -11,17 +11,21 @@ const userRouter = require("./routes/userRouter");
 const matchRoutes = require("./routes/matchRoutes");
 const PORT = process.env.PORT || 5000;
 
-// Una sola configuración de CORS
+// 🔍 Log para verificar las variables de entorno cargadas
+console.log("Variables de entorno disponibles:", Object.keys(process.env));
+console.log("Valor de MONGO_URI:", process.env.MONGO_URI); // Debería imprimirse
+
+// Configuración de CORS
 app.use(cors({
   origin: ['http://localhost:5173', 'https://time-swipe-frontend.onrender.com'],
   credentials: true
 }));
 
-// Resto de middleware
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Connect to the database
+// 🔌 Intentar conectar con la BD
 connectDB()
   .then(() => {
     console.log("Database connection established...");
@@ -30,10 +34,10 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.error("Database cannot be connected!!");
+    console.error("Database cannot be connected!!", err);
   });
 
-// Routes
+// Rutas
 app.use("/api/v1", authRouter);
 app.use("/api/v1", profileRouter);
 app.use("/api/v1", requestRouter);
