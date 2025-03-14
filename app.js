@@ -18,8 +18,17 @@ console.log("Valor de MONGO_URI:", process.env.MONGO_URI); // Debería imprimirs
 // Configuración de CORS
 app.use(cors({
   origin: ['http://localhost:5173', 'https://time-swipe-frontend.onrender.com'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie']
 }));
+
+// Configure cookie settings for production
+app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Middleware
 app.use(express.json());
