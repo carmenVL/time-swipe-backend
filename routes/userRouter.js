@@ -59,6 +59,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 // User feed
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
     const loggedInUser = req.user;
 
     const page = parseInt(req.query.page) || 1;
@@ -107,7 +110,11 @@ userRouter.get("/feed", userAuth, async (req, res) => {
 
     res.json({ data: users });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Error in feed endpoint:', err);
+    res.status(500).json({ 
+      message: "An error occurred while fetching the feed",
+      error: err.message 
+    });
   }
 });
 
