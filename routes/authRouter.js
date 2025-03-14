@@ -31,9 +31,13 @@ authRouter.post("/user/signup", validateSignUpData, async (req, res) => {
     const savedUser = await user.save();
     const token = await jwt.sign({ _id: savedUser._id }, SECRET_KEY, { expiresIn: "7d" });
 
-    res.cookie("token", token, {
-      expires: new Date(Date.now() + 8 * 3600000),
-    });
+// Añade estas propiedades a tus cookies
+res.cookie("token", token, {
+  expires: new Date(Date.now() + 8 * 3600000),
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+});
 
     res.json({ message: "User Added successfully!", data: savedUser });
   } catch (err) {
@@ -60,7 +64,13 @@ authRouter.post("/user/login", async (req, res) => {
       const token = await jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: "7d" });
 
       // Add the token to cookie and send the response back to the user
-      res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
+      // Añade estas propiedades a tus cookies
+res.cookie("token", token, {
+  expires: new Date(Date.now() + 8 * 3600000),
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+});
 
       res.status(200).send(user);
     } else {
